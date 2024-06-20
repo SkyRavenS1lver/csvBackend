@@ -98,6 +98,7 @@ public class AccountResource {
         List<Patient> dataList = new ArrayList<>();
         try {
             // Assuming CSV file contains data that maps to a MyData class
+            //            dataList = csvReaderService.readCsv("C:/Users/Raven/Downloads/RandomData.csv", Patient.class);
             dataList = csvReaderService.readCsv("C:/Users/Raven/Downloads/patient_demographic.csv", Patient.class);
             for (Patient data : dataList) {
                 String tempDate = data.getDob();
