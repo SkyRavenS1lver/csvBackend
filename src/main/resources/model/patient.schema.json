@@ -16,9 +16,8 @@
     },
     "gender": {
       "type": "string",
-      "maxLength": 1,
       "minLength": 1,
-      "pattern": "^[MF]$"
+      "enum": ["M", "F"]
     },
     "dob": {
       "type": "string",
