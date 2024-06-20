@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Patient",
+  "description": "Patient Schema",
+  "type": "object",
+  "properties": {
+    "first_name": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z\\s]+$"
+    },
+    "last_name": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z\\s]+$"
+    },
+    "gender": {
+      "type": "string",
+      "maxLength": 1,
+      "minLength": 1,
+      "pattern": "^[MF]$"
+    },
+    "dob": {
+      "type": "string",
+      "format": "date",
+      "minLength": 1
+    },
+    "address": {
+      "type": "string",
+      "minLength": 1
+    },
+    "suburb": {
+      "type": "string",
+      "minLength": 1
+    },
+    "state": {
+      "type": "string",
+      "minLength": 1
+    },
+    "postcode": {
+      "type": "string",
+      "pattern": "^^\\d+$",
+      "minLength": 1
+    },
+    "phone": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(\\+61|0)?(\\s?\\(?\\d{1,4}\\)?\\s?)(\\d{4}\\s?\\d{4})$"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "minLength": 1
+    }
+  },
+  "message": {
+    "minLength": "This data is required!"
+  },
+  "required": ["first_name", "last_name", "gender", "dob", "address", "email", "phone", "postcode", "state", "suburb"]
+}

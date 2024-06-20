@@ -160,6 +160,7 @@ dependencies {
     }
     implementation(group: 'com.networknt', name: 'json-schema-validator', version: '1.4.0');
     implementation(group: 'com.opencsv', name: 'opencsv', version: '5.8');
+    implementation 'io.github.kazitanvirazad:csv4pojo:2.1.0'
 
     // Use ", version: jhipsterDependenciesVersion, changing: true" if you want
     // to use a SNAPSHOT release instead of a stable release
