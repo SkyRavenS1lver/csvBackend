@@ -1,7 +1,16 @@
 package com.mycompany.myapp.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.mycompany.myapp.domain.Patient;
+import com.opencsv.CSVReader;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.exceptions.CsvValidationException;
+import java.io.*;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -66,6 +75,65 @@ public class AccountResource {
         public String getLogin() {
             return login;
         }
+    }
+
+    //    @GetMapping("/convert")
+    //    public List<List<String>> convertCSV() throws FileNotFoundException {
+    //        List<List<String>> records = new ArrayList<List<String>>();
+    //        try (CSVReader csvReader = new CSVReader(new FileReader("C:/Users/Raven/Downloads/patient_demographic.csv"));) {
+    //            String[] values = null;
+    //
+    //            while ((values = csvReader.readNext()) != null) {
+    //                records.add(Arrays.asList(values));
+    //            }
+    //
+    //        } catch (Exception e) {
+    //            log.info(e.getMessage());
+    //            e.printStackTrace();
+    //        }
+    //        return records;
+    //    }
+    @GetMapping("/convert")
+    public List<Patient> convertCSV() throws FileNotFoundException {
+        List<Patient> records = new ArrayList();
+        CSVReader reader = null;
+        InputStream is = null;
+        try {
+            File initialFile = new File("C:/Users/Raven/Downloads/patient_demographic.csv");
+            is = new FileInputStream(initialFile);
+            reader = new CSVReader(new InputStreamReader(is));
+            ColumnPositionMappingStrategy strat = new ColumnPositionMappingStrategy();
+            strat.setType(Patient.class);
+            String[] columns = new String[] {
+                "firstName",
+                "lastName",
+                "gender",
+                "dob",
+                "address",
+                "suburb",
+                "state",
+                "postcode",
+                "phone",
+                "email",
+            };
+            strat.setColumnMapping(columns);
+            CsvToBean csv = new CsvToBean();
+            csv.setCsvReader(reader);
+            csv.setMappingStrategy(strat);
+            records = csv.parse();
+            is.close();
+            reader.close();
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            e.printStackTrace();
+        }
+        records.remove(0);
+        return records;
+    }
+
+    @GetMapping("/")
+    public String hello() {
+        return "Hello";
     }
 
     private UserVM getUserFromAuthentication(AbstractAuthenticationToken authToken) {
