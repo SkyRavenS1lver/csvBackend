@@ -7,53 +7,87 @@
     "first_name": {
       "type": "string",
       "minLength": 1,
-      "pattern": "^[A-Za-z\\s\\-]+$"
+      "pattern": "^[A-Za-z\\s\\-]+$",
+      "message": {
+        "pattern": "0: Data is invalid! (Cannot contain special character other than hyphen)",
+        "minLength": "0: This data is required!"
+      }
     },
     "last_name": {
       "type": "string",
       "minLength": 1,
-      "pattern": "^[A-Za-z\\s\\-]+$"
+      "pattern": "^[A-Za-z\\s\\-]+$",
+      "message": {
+        "pattern": "1: Data is invalid! (Cannot contain special character other than hyphen)",
+        "minLength": "1: This data is required!"
+      }
     },
     "gender": {
       "type": "string",
       "minLength": 1,
-      "enum": ["M", "F"]
+      "enum": ["M", "F"],
+      "message": {
+        "enum": "2: Data must be filled with M or F!",
+        "minLength": "2: This data is required!"
+      }
     },
     "dob": {
       "type": "string",
       "format": "date",
-      "minLength": 1
+      "minLength": 1,
+      "message": {
+        "format": "3: Data is invalid! (DD/MM/YYYY)",
+        "minLength": "3: This data is required!"
+      }
     },
     "address": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "message": {
+        "minLength": "4: This data is required!"
+      }
     },
     "suburb": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "message": {
+        "minLength": "5: This data is required!"
+      }
     },
     "state": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "message": {
+        "minLength": "6: This data is required!"
+      }
     },
     "postcode": {
       "type": "string",
-      "pattern": "^^\\d+$",
-      "minLength": 1
+      "pattern": "^\\d+$",
+      "minLength": 1,
+      "message": {
+        "minLength": "7: This data is required!",
+        "pattern": "7: Data is invalid! (must only contain numbers)"
+      }
     },
     "phone": {
       "type": "string",
       "minLength": 1,
-      "pattern": "^(\\+61|0)?(\\s?\\(?\\d{1,4}\\)?\\s?)(\\d{4}\\s?\\d{4})$"
+      "pattern": "^(\\+61|0)?(\\s?\\(?\\d{1,4}\\)?\\s?)(\\d{4}\\s?\\d{4})$",
+      "message": {
+        "minLength": "8: This data is required!",
+        "pattern": "8: Please ensure the data is a valid phone number! ((02) xxxx xxxx)"
+      }
     },
     "email": {
       "type": "string",
       "format": "email",
-      "minLength": 1
+      "minLength": 1,
+      "message": {
+        "minLength": "9: This data is required!",
+        "format": "9: Data is invalid (example@mail.com)!"
+      }
     }
-  },
-  "message": {
-    "minLength": "This data is required!"
   },
   "required": ["first_name", "last_name", "gender", "dob", "address", "email", "phone", "postcode", "state", "suburb"]
 }
