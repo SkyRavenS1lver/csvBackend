@@ -5,6 +5,7 @@ import com.mycompany.myapp.constant.Constant;
 import com.mycompany.myapp.domain.Patient;
 import com.mycompany.myapp.service.CsvFileService;
 import com.mycompany.myapp.service.CsvReaderService;
+import com.mycompany.myapp.service.DateValidatorUsingDateTimeFormatter;
 import com.mycompany.myapp.service.JsonValidatorService;
 import com.networknt.schema.ValidationMessage;
 import java.io.FileNotFoundException;
@@ -12,8 +13,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
-public class CsvController {
+public class CsvController implements DateValidatorUsingDateTimeFormatter {
 
     @Autowired
     private CsvReaderService csvReaderService;
@@ -54,7 +53,6 @@ public class CsvController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is empty");
         }
         try {
-            // Ensure the upload directory exists
             Path uploadPath = Paths.get(Constant.FILE_DIRECTORY);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
@@ -80,18 +78,12 @@ public class CsvController {
     public ResponseEntity<List<Patient>> convertCSV(@RequestParam String name) throws FileNotFoundException {
         List<Patient> dataList = new ArrayList<>();
         try {
-            //            dataList = csvReaderService.readCsv("C:/Users/Raven/Downloads/RandomData.csv", Patient.class);
             dataList = csvReaderService.readCsv(Constant.FILE_DIRECTORY + "/" + name, Patient.class);
             for (Patient data : dataList) {
                 String tempDate = data.getDob();
-                try {
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-                    Date date = formatter.parse(tempDate);
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    data.setDob(dateFormat.format(date));
-                } catch (Exception ignored) {}
+                isValidAndConvert(data);
                 String jsonData = new ObjectMapper().writeValueAsString(data);
-                Set<ValidationMessage> errors = jsonValidatorService.validateJson(jsonData, "model/patient.schema.json");
+                Set<ValidationMessage> errors = jsonValidatorService.validateJson(jsonData, Constant.SCHEMA_PATH_PATIENT);
                 if (!errors.isEmpty()) {
                     data.setErrors(errors);
                 }
