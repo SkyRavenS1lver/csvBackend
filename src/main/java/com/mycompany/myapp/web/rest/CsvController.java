@@ -3,16 +3,15 @@ package com.mycompany.myapp.web.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.myapp.constant.Constant;
 import com.mycompany.myapp.domain.Patient;
-import com.mycompany.myapp.service.CsvFileService;
-import com.mycompany.myapp.service.CsvReaderService;
-import com.mycompany.myapp.service.DateValidatorUsingDateTimeFormatter;
-import com.mycompany.myapp.service.JsonValidatorService;
+import com.mycompany.myapp.service.*;
 import com.networknt.schema.ValidationMessage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
-public class CsvController implements DateValidatorUsingDateTimeFormatter {
+public class CsvController implements DateValidatorUsingDateTimeFormatter, UniqueNameGenerator, CSVFileValidator {
 
     @Autowired
     private CsvReaderService csvReaderService;
@@ -57,16 +56,29 @@ public class CsvController implements DateValidatorUsingDateTimeFormatter {
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-
-            // Check if the file already exists
-            Path filePath = uploadPath.resolve(file.getOriginalFilename());
+            if (!isCsvFile(file)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid file type. Only CSV files are allowed.");
+            }
+            //            // Check if the file already exists
+            //            Path filePath = uploadPath.resolve(file.getOriginalFilename());
             //            if (Files.exists(filePath)) {
             //                return ResponseEntity.status(HttpStatus.CONFLICT).body("File already exists");
             //            }
             //            Files.copy(file.getInputStream(), filePath);
 
-            // Save the file to the upload directory, overwriting if it exists
-            Files.copy(file.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            //            // Save the file to the upload directory, overwriting if it exists
+            //            Path filePath = uploadPath.resolve(file.getOriginalFilename());
+            //            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            //            // Generate a unique file name if file already exists
+            //            String fileName = generateUniqueFileName(uploadPath, Objects.requireNonNull(file.getOriginalFilename()));
+            //            Path filePath = uploadPath.resolve(fileName);
+            //            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // Save file using date
+            String dates = (new SimpleDateFormat("dd-MMM-yy HH-mm-ss ")).format(new Date());
+            Path filePath = uploadPath.resolve(dates + file.getOriginalFilename());
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
             return ResponseEntity.ok("File uploaded and saved successfully");
         } catch (IOException e) {

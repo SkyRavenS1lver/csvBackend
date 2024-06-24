@@ -5,4 +5,6 @@ public interface Constant {
     String DATE_VALID_FORMAT = "dd/MM/uuuu";
     String DATE_VALIDATOR_FORMAT = "uuuu-MM-dd";
     String SCHEMA_PATH_PATIENT = "model/patient.schema.json";
+    String CSV_MIME_TYPE = "text/csv";
+    String CSV_EXTENSION = ".csv";
 }
