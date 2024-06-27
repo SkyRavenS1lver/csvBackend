@@ -7,10 +7,7 @@ import com.mycompany.myapp.service.*;
 import com.networknt.schema.ValidationMessage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import org.slf4j.Logger;
@@ -22,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/csv")
 public class CsvController implements DateValidatorUsingDateTimeFormatter, UniqueNameGenerator, CSVFileValidator {
 
     @Autowired
@@ -36,7 +33,7 @@ public class CsvController implements DateValidatorUsingDateTimeFormatter, Uniqu
 
     private final Logger log = LoggerFactory.getLogger(CsvController.class);
 
-    @GetMapping("/convert/all-files")
+    @GetMapping("/all-files")
     public ResponseEntity<List<String>> getCsvFiles() {
         try {
             List<String> csvFileNames = csvFileService.getCsvFileNames();
@@ -46,7 +43,7 @@ public class CsvController implements DateValidatorUsingDateTimeFormatter, Uniqu
         }
     }
 
-    @PostMapping("/upload-csv")
+    @PostMapping("/")
     public ResponseEntity<String> uploadCsv(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is empty");
@@ -86,7 +83,7 @@ public class CsvController implements DateValidatorUsingDateTimeFormatter, Uniqu
         }
     }
 
-    @GetMapping("/convert")
+    @GetMapping("/")
     public ResponseEntity<List<Patient>> convertCSV(@RequestParam String name) throws FileNotFoundException {
         List<Patient> dataList = new ArrayList<>();
         try {
@@ -108,5 +105,21 @@ public class CsvController implements DateValidatorUsingDateTimeFormatter, Uniqu
         }
 
         return ResponseEntity.ok().body(dataList);
+    }
+
+    @DeleteMapping("/")
+    public ResponseEntity<Void> deleteCsvFile(@RequestParam String name) {
+        try {
+            boolean deleted = csvFileService.deleteCsvFile(name);
+            if (deleted) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (NoSuchFileException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
